@@ -1,10 +1,13 @@
 package com.example.Ecommerce.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jdk.jfr.Enabled;
 import org.springframework.stereotype.Component;
 
-
+@Entity(name = "CategoryDB")
 public class Category {
-
+    @Id
     private Long categoryId;
     private String categoryName;
 
