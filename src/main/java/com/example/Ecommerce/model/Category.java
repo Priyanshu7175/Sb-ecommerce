@@ -1,6 +1,8 @@
 package com.example.Ecommerce.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jdk.jfr.Enabled;
 import org.springframework.stereotype.Component;
@@ -8,8 +10,18 @@ import org.springframework.stereotype.Component;
 @Entity(name = "CategoryDB")
 public class Category {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
     private String categoryName;
+
+    public Category() {
+    }
+
+    public Category(Long categoryId, String categoryName) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+    }
+
 
     public Long getCategoryId() {
         return categoryId;
@@ -27,8 +39,5 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public Category(Long categoryId, String categoryName) {
-        this.categoryId = categoryId;
-        this.categoryName = categoryName;
-    }
+
 }

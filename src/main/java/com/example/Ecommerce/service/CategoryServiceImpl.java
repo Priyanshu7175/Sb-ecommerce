@@ -1,6 +1,8 @@
 package com.example.Ecommerce.service;
 
 import com.example.Ecommerce.model.Category;
+import com.example.Ecommerce.repositories.CategoryRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,46 +14,37 @@ import java.util.Optional;
 @Service
 public class CategoryServiceImpl implements CategoryService{
 
-    long idx =1;
-    private List<Category> categories = new ArrayList<>();
+    //long idx =1;
+    //private List<Category> categories = new ArrayList<>();
+    @Autowired
+    private CategoryRepo categoryRepo;
+
     @Override
     public List<Category> getAllCategories() {
-        return categories;
+        return categoryRepo.findAll();
     }
 
     @Override
     public String createCategory(Category category) {
-        category.setCategoryId(idx);
-        idx++;
-        categories.add(category);
+
+        categoryRepo.save(category);
         return "Category added";
     }
 
     @Override
     public String deleteCategory(Long categoryId) {
-        Category category = categories.stream().filter(c -> c.getCategoryId().equals(categoryId)).findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource not found"));
 
-        categories.remove(category);
+        Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
+        categoryRepo.delete(category);
         return "CategoryId "+categoryId+" is Deleted";
     }
 
     @Override
     public String updateCategory(Category category, Long categoryId) {
 
-        Optional<Category> categoryCheck = categories.stream().filter(c -> c.getCategoryId().equals(categoryId)).findFirst();
-
-        if(categoryCheck.isPresent()){
-               Category currentCategory = categoryCheck.get();
-
-               if(currentCategory.getCategoryName().equals(category.getCategoryName()))
-               { return category.getCategoryName()+" is already the same name";}
-
-               currentCategory.setCategoryName(category.getCategoryName());
-               return category.getCategoryName()+" has been successfully updated";
-        }
-        else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found");
-        }
-
+        Category categoryCheck = categoryRepo.findById(categoryId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
+        category.setCategoryId(categoryId);
+        categoryRepo.save(category);
+        return category.getCategoryName()+" has been updated";
     }
 }
