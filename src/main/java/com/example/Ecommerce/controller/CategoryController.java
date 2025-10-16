@@ -2,6 +2,7 @@ package com.example.Ecommerce.controller;
 
 import com.example.Ecommerce.model.Category;
 import com.example.Ecommerce.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class CategoryController {
     }
 
     @PostMapping("/api/public/categories")
-    public ResponseEntity<String> addCategories(@RequestBody Category category){
+    public ResponseEntity<String> addCategories(@Valid @RequestBody Category category){
 
       String status = cs.createCategory(category);
       return new ResponseEntity<>(status,HttpStatus.CREATED);
