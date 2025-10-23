@@ -1,5 +1,7 @@
 package com.example.Ecommerce.service;
 
+import com.example.Ecommerce.exception.APIException;
+import com.example.Ecommerce.exception.ResourceNotFoundException;
 import com.example.Ecommerce.model.Category;
 import com.example.Ecommerce.repositories.CategoryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,20 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public List<Category> getAllCategories() {
-        return categoryRepo.findAll();
+
+        List<Category> allCategories = categoryRepo.findAll();
+        if(allCategories.isEmpty()){
+            throw new APIException("No category created");
+        }
+        return allCategories;
     }
 
     @Override
     public String createCategory(Category category) {
-
+        Category savedCategory = categoryRepo.findByCategoryName(category.getCategoryName());
+        if(savedCategory != null){
+            throw new APIException("Category with name "+category.getCategoryName()+" already exists");
+        }
         categoryRepo.save(category);
         return "Category added";
     }
@@ -34,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public String deleteCategory(Long categoryId) {
 
-        Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
+        Category category = categoryRepo.findById(categoryId).orElseThrow(()-> new ResourceNotFoundException("Category","categoryId",categoryId));
         categoryRepo.delete(category);
         return "CategoryId "+categoryId+" is Deleted";
     }
@@ -42,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public String updateCategory(Category category, Long categoryId) {
 
-        Category categoryCheck = categoryRepo.findById(categoryId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
+        Category categoryCheck = categoryRepo.findById(categoryId).orElseThrow(()-> new ResourceNotFoundException("Category","categoryId",categoryId));
         category.setCategoryId(categoryId);
         categoryRepo.save(category);
         return category.getCategoryName()+" has been updated";
