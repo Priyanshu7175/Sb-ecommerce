@@ -21,17 +21,17 @@ public class CategoryController {
     }
 
     @GetMapping("/api/public/categories")
-    public ResponseEntity<CategoryResponse> getCategories() {
+    public ResponseEntity<CategoryResponse> getCategories(@RequestParam(name="pageNumber") Integer pageNumber,
+                                                          @RequestParam(name="pageSize") Integer pageSize) {
 
-        CategoryResponse allCategories = cs.getAllCategories();
+        CategoryResponse allCategories = cs.getAllCategories(pageNumber,pageSize);
         return new ResponseEntity<>(allCategories,HttpStatus.OK);
     }
-
     @PostMapping("/api/public/categories")
     public ResponseEntity<CategoryDTO> addCategories(@Valid @RequestBody CategoryDTO categoryDTO){
 
        CategoryDTO status = cs.createCategory(categoryDTO);
-      return new ResponseEntity<>(categoryDTO,HttpStatus.CREATED);
+      return new ResponseEntity<>(status,HttpStatus.CREATED);
     }
 
     @DeleteMapping("/api/admin/categories/{categoryId}")
